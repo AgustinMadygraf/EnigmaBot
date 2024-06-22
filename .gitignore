@@ -1,8 +1,9 @@
+.env
+core/__pycache__/
+docs/00-Prompt-for-ProjectAnalysis.md
 src/__pycache__/
 src/logs/sistema.log
 src/logs/sistema.log.*
 src/logs/__pycache__/
-docs/00-Prompt-for-ProjectAnalysis.md
-.env
 tests/__pycache__/
-
+utils/__pycache__/

@@ -1,13 +1,14 @@
 # src/config_loader.py
 import json
 import sys
-from src.logs.config_logger import configurar_logging
+from utils.config_logger import configurar_logging
 
 logger = configurar_logging()
 
 class ConfigManager:
-    def __init__(self, config_file):
+    def __init__(self, config_file, logger=logger):
         self.config_file = config_file
+        self.logger = logger
         self.config = self.cargar_configuracion()
 
     def cargar_configuracion(self):
@@ -18,7 +19,7 @@ class ConfigManager:
         try:
             with open(self.config_file, 'r', encoding='utf-8') as config_file:
                 config = json.load(config_file)
-                logger.info("Configuración cargada correctamente.")
+                self.logger.info("Configuración cargada correctamente.")
                 return config
         except FileNotFoundError:
             self.manejar_error(f"Archivo '{self.config_file}' no encontrado.", "Error: Archivo de configuración no encontrado.")
@@ -33,5 +34,5 @@ class ConfigManager:
         """
         Maneja los errores de configuración registrando el mensaje de error y finalizando el programa.
         """
-        logger.error(mensaje_log)
+        self.logger.error(mensaje_log)
         sys.exit(mensaje_salida)

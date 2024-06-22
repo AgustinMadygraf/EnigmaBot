@@ -1,20 +1,21 @@
 # src/chatbot.py
 from typing import Callable
 from gpt4all import GPT4All
-from src.logs.config_logger import configurar_logging
+from utils.config_logger import configurar_logging
 from tabulate import tabulate
 import time
 
 logger = configurar_logging()
 
 class ChatBot:
-    def __init__(self, config, input_func: Callable = input):
+    def __init__(self, config, model_class=GPT4All, input_func: Callable = input):
         self.config = config
         self.input_func = input_func
         self.ram_seleccionada = self.seleccionar_memoria_ram()
         self.modelo_seleccionado = self.seleccionar_modelo()
         self.model_path = config['model_path']
-        self.model = GPT4All(self.modelo_seleccionado, self.model_path)
+        self.model_class = model_class
+        self.model = self.model_class(self.modelo_seleccionado, self.model_path)
         self.chat_histories = {}
         self.monitor_task = None
         self.system_template = self.seleccionar_system_template()
