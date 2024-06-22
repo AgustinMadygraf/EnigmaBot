@@ -98,12 +98,13 @@ class ChatBot:
         tokens = []
         chat_history = self.chat_histories[chat_id]
         prompt = " ".join([msg['content'] for msg in chat_history])
-        for token in self.model.generate(prompt, temp=0.7, streaming=True):
-            tokens.append(token)
-            print(token, end='', flush=True)
-        respuesta = "".join(tokens)
-        self.chat_histories[chat_id].append({'role': 'bot', 'content': respuesta})
-        return respuesta
+        with self.model.chat_session():
+            for token in self.model.generate(prompt, temp=0.7, streaming=True):
+                tokens.append(token)
+                print(token, end='', flush=True)
+            respuesta = "".join(tokens)
+            self.chat_histories[chat_id].append({'role': 'bot', 'content': respuesta})
+            return respuesta
 
     async def generate_response(self, model, prompt):
         inicio_generacion = time.time()
