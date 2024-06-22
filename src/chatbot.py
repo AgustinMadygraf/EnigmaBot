@@ -3,7 +3,9 @@
 from gpt4all import GPT4All
 from src.logs.config_logger import configurar_logging
 from tabulate import tabulate
+import asyncio
 import time
+from src.user_interaction_manager import monitorizar_recursos
 
 logger = configurar_logging()
 
@@ -14,6 +16,7 @@ class ChatBot:
         self.modelo_seleccionado = self.seleccionar_modelo()
         self.model = GPT4All(self.modelo_seleccionado, model_path)
         self.chat_histories = {}
+        self.monitor_task = None
 
     def seleccionar_memoria_ram(self):
         """
@@ -68,16 +71,20 @@ class ChatBot:
             except ValueError:
                 print("Entrada inválida. Por favor ingresa un número.")
 
-    def iniciar_chat(self):
+    async def iniciar_chat(self):
         logger.info("Bienvenido al ChatBot interactivo!")
         chat_id = "user_console"  # Usaremos un ID ficticio para la consola
         self.chat_histories[chat_id] = []
-        while True:
-            mensaje = input("User: ")
-            if mensaje.lower() == "salir":
-                logger.info("Terminando el chat. ¡Hasta luego!")
-                break
-            self.procesar_mensaje(chat_id, mensaje)
+        self.monitor_task = asyncio.create_task(self.iniciar_monitorizacion())
+        try:
+            while True:
+                mensaje = input("User: ")
+                if mensaje.lower() == "salir":
+                    logger.info("Terminando el chat. ¡Hasta luego!")
+                    break
+                self.procesar_mensaje(chat_id, mensaje)
+        finally:
+            await self.detener_monitorizacion()
 
     def procesar_mensaje(self, chat_id, mensaje):
         self.chat_histories[chat_id].append({'role': 'user', 'content': mensaje})
@@ -114,3 +121,12 @@ class ChatBot:
         respuesta_bot = "".join(tokens)
         print(f"\n\nInicio Respuesta: \n{respuesta_bot}\nFin Respuesta\n\n\n")
         return respuesta_bot, tiempo_generacion
+
+    async def iniciar_monitorizacion(self):
+        self.monitor_task = asyncio.create_task(monitorizar_recursos())
+
+    async def detener_monitorizacion(self):
+        if self.monitor_task:
+            self.monitor_task.cancel()
+            await self.monitor_task
+            logger.info("Monitorización de recursos detenida.")
