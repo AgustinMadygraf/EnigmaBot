@@ -1,5 +1,4 @@
 # src/config_loader.py
-import os
 import json
 import sys
 from src.logs.config_logger import configurar_logging
@@ -22,11 +21,17 @@ class ConfigManager:
                 logger.info("Configuración cargada correctamente.")
                 return config
         except FileNotFoundError:
-            logger.error(f"Archivo '{self.config_file}' no encontrado.")
-            sys.exit("Error: Archivo de configuración no encontrado.")
-        except json.JSONDecodeError:
-            logger.error(f"Error al decodificar '{self.config_file}'. Verifica el formato del archivo.")
-            sys.exit("Error: Formato de archivo de configuración inválido.")
+            self.manejar_error(f"Archivo '{self.config_file}' no encontrado.", "Error: Archivo de configuración no encontrado.")
+        except json.JSONDecodeError as e:
+            self.manejar_error(f"Error al decodificar '{self.config_file}': {e}", "Error: Formato de archivo de configuración inválido.")
+        except PermissionError:
+            self.manejar_error(f"Permiso denegado al intentar leer el archivo '{self.config_file}'.", "Error: Permiso denegado.")
         except Exception as e:
-            logger.error(f"Error inesperado al cargar '{self.config_file}': {e}")
-            sys.exit("Error inesperado al cargar la configuración.")
+            self.manejar_error(f"Error inesperado al cargar '{self.config_file}': {e}", "Error inesperado al cargar la configuración.")
+
+    def manejar_error(self, mensaje_log, mensaje_salida):
+        """
+        Maneja los errores de configuración registrando el mensaje de error y finalizando el programa.
+        """
+        logger.error(mensaje_log)
+        sys.exit(mensaje_salida)
