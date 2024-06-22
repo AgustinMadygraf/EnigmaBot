@@ -12,5 +12,5 @@ async def main():
     logger.debug(f"Configuración cargada: {config}\n")
     logger.debug(f"Versión de Python: {sys.version}")
     logger.debug(f"El archivo seleccionado para trabajar es: {config['chat_history_path']}")
-    chatbot = ChatBot(None, config['model_path'], config)
+    chatbot = ChatBot(config)
     await chatbot.iniciar_chat()

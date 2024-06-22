@@ -10,11 +10,12 @@ from src.user_interaction_manager import monitorizar_recursos
 logger = configurar_logging()
 
 class ChatBot:
-    def __init__(self, model_name, model_path, config):
+    def __init__(self, config):
         self.config = config
         self.ram_seleccionada = self.seleccionar_memoria_ram()
         self.modelo_seleccionado = self.seleccionar_modelo()
-        self.model = GPT4All(self.modelo_seleccionado, model_path)
+        self.model_path = config['model_path']
+        self.model = GPT4All(self.modelo_seleccionado, self.model_path)
         self.chat_histories = {}
         self.monitor_task = None
 
