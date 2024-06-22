@@ -1,4 +1,4 @@
-# src/app.
+#src/app.py
 import sys
 from src.config_loader import ConfigManager
 from src.chatbot import ChatBot  
