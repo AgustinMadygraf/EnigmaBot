@@ -33,18 +33,15 @@ def config():
 
 @pytest.fixture
 def chatbot(config):
-    return ChatBot(config)
+    return ChatBot(config, input_func=lambda _: "1")
 
-def test_seleccionar_memoria_ram(chatbot, monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda _: "2")
-    assert chatbot.seleccionar_memoria_ram() == "4 GB"
+def test_seleccionar_memoria_ram(chatbot):
+    assert chatbot.seleccionar_memoria_ram() == "1 GB"
 
-def test_seleccionar_modelo(chatbot, monkeypatch):
-    chatbot.ram_seleccionada = "4 GB"
-    monkeypatch.setattr('builtins.input', lambda _: "1")
-    assert chatbot.seleccionar_modelo() == "replit-code-v1_5-3b-q4_0.gguf"
+def test_seleccionar_modelo(chatbot):
+    chatbot.ram_seleccionada = "1 GB"
+    assert chatbot.seleccionar_modelo() == "all-MiniLM-L6-v2-f16.gguf"
 
-def test_seleccionar_system_template(chatbot, monkeypatch):
-    monkeypatch.setattr('builtins.input', lambda _: "1")
+def test_seleccionar_system_template(chatbot):
     template = chatbot.seleccionar_system_template()
     assert "Responde siempre en español" in template

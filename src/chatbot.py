@@ -1,5 +1,5 @@
 # src/chatbot.py
-
+from typing import Callable
 from gpt4all import GPT4All
 from src.logs.config_logger import configurar_logging
 from tabulate import tabulate
@@ -8,8 +8,9 @@ import time
 logger = configurar_logging()
 
 class ChatBot:
-    def __init__(self, config):
+    def __init__(self, config, input_func: Callable = input):
         self.config = config
+        self.input_func = input_func
         self.ram_seleccionada = self.seleccionar_memoria_ram()
         self.modelo_seleccionado = self.seleccionar_modelo()
         self.model_path = config['model_path']
@@ -27,7 +28,7 @@ class ChatBot:
         table = tabulate(table_data, headers=["Opción", "Memoria RAM"], tablefmt="grid")
         print(table)
 
-        opcion_ram = input("\nElige una opción: ")
+        opcion_ram = self.input_func("\nElige una opción: ")
         if opcion_ram == "":
             opcion_ram = "4"
         logger.info(f"Opción de RAM seleccionada: {opcion_ram}")
@@ -47,7 +48,6 @@ class ChatBot:
         """
         return self.config['models_available'].get(self.ram_seleccionada, [])
 
-
     def mostrar_opciones_modelo(self, modelos):
         """
         Muestra los modelos de IA disponibles al usuario.
@@ -64,7 +64,7 @@ class ChatBot:
         """
         while True:
             try:
-                seleccion_numero = input("\nSelecciona el número del modelo: ").strip()
+                seleccion_numero = self.input_func("\nSelecciona el número del modelo: ").strip()
                 if seleccion_numero == "":
                     seleccion_numero = "2"
                 seleccion_numero = int(seleccion_numero)
@@ -88,7 +88,7 @@ class ChatBot:
 
         while True:
             try:
-                seleccion_numero = input("\nSelecciona el número del template de sistema: ").strip()
+                seleccion_numero = self.input_func("\nSelecciona el número del template de sistema: ").strip()
                 if seleccion_numero == "":
                     seleccion_numero = "1"
                 seleccion_numero = int(seleccion_numero)
@@ -118,12 +118,11 @@ class ChatBot:
         Ejecuta el ciclo principal del chat interactivo.
         """
         while True:
-            mensaje = input("User: ")
+            mensaje = self.input_func("User: ")
             if mensaje.lower() == "salir":
                 logger.info("Terminando el chat. ¡Hasta luego!")
                 break
             self.procesar_mensaje(chat_id, mensaje)
-
 
     def procesar_mensaje(self, chat_id, mensaje):
         self.chat_histories[chat_id].append({'role': 'user', 'content': mensaje})
