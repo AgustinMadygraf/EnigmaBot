@@ -1,4 +1,4 @@
-#src/app.py
+# core/main.py
 import sys
 import os
 import asyncio

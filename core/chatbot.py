@@ -1,9 +1,10 @@
-# src/chatbot.py
+# core/chatbot.py
 from typing import Callable
 from gpt4all import GPT4All
 from utils.config_logger import configurar_logging
 from tabulate import tabulate
 import time
+import asyncio
 
 logger = configurar_logging()
 
@@ -119,11 +120,19 @@ class ChatBot:
         Ejecuta el ciclo principal del chat interactivo.
         """
         while True:
-            mensaje = self.input_func("User: ")
+            mensaje = await self.obtener_input_async("User: ")
             if mensaje.lower() == "salir":
                 logger.info("Terminando el chat. ¡Hasta luego!")
                 break
             self.procesar_mensaje(chat_id, mensaje)
+
+    async def obtener_input_async(self, prompt):
+        """
+        Solicita entrada del usuario de manera asíncrona.
+        """
+        print(prompt, end='', flush=True)
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, input)
 
     def procesar_mensaje(self, chat_id, mensaje):
         self.chat_histories[chat_id].append({'role': 'user', 'content': mensaje})

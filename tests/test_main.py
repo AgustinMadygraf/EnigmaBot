@@ -1,6 +1,6 @@
-# tests/test_app.py
+# tests/test_main.py
 import pytest
-from src.app import main
+from core.main import main
 
 @pytest.mark.asyncio
 async def test_main(monkeypatch):
@@ -45,8 +45,7 @@ async def test_main(monkeypatch):
         chatbot = DummyChatBot(config, input_func=input_func)
         await chatbot.iniciar_chat()
 
-    monkeypatch.setattr('src.config_loader.ConfigManager', DummyConfigManager)
-    monkeypatch.setattr('src.chatbot.ChatBot', DummyChatBot)
+    monkeypatch.setattr('utils.config_loader.ConfigManager', DummyConfigManager)
+    monkeypatch.setattr('core.chatbot.ChatBot', DummyChatBot)
 
     await dummy_main(input_func=lambda _: "1")
-
