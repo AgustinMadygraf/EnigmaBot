@@ -7,40 +7,26 @@ from src.logs.config_logger import configurar_logging
 logger = configurar_logging()
 
 class ConfigManager:
-    def __init__(self, config_file="config.json"):
+    def __init__(self, config_file):
         self.config_file = config_file
-        self.config = self.cargar_configuracion_inicial()
+        self.config = self.cargar_configuracion()
 
-    def cargar_configuracion_inicial(self):
+    def cargar_configuracion(self):
         """
-        Inicializa y carga la configuración inicial del programa.
+        Inicializa y carga la configuración del programa.
         Retorna un objeto de configuración.
         """
         try:
-            config = self.cargar_configuracion(self.config_file)
-            logger.debug("Configuración cargada correctamente.")
+            with open(self.config_file, 'r', encoding='utf-8') as config_file:
+                config = json.load(config_file)
+                logger.info("Configuración cargada correctamente.")
+                return config
         except FileNotFoundError:
-            logger.error("Archivo 'config.json' no encontrado.")
+            logger.error(f"Archivo '{self.config_file}' no encontrado.")
             sys.exit("Error: Archivo de configuración no encontrado.")
         except json.JSONDecodeError:
-            logger.error("Error al decodificar 'config.json'. Verifica el formato del archivo.")
+            logger.error(f"Error al decodificar '{self.config_file}'. Verifica el formato del archivo.")
             sys.exit("Error: Formato de archivo de configuración inválido.")
         except Exception as e:
-            logger.error(f"Error inesperado al cargar 'config.json': {e}")
-            sys.exit("Error inesperado al cargar la configuración.")
-
-        return config
-
-    def cargar_configuracion(self, ruta_archivo):
-        try:
-            with open(ruta_archivo, 'r', encoding='utf-8') as config_file:
-                return json.load(config_file)
-        except FileNotFoundError:
-            logger.error(f"Archivo '{ruta_archivo}' no encontrado.")
-            sys.exit("Error: Archivo de configuración no encontrado.")
-        except json.JSONDecodeError:
-            logger.error(f"Error al decodificar '{ruta_archivo}'. Verifica el formato del archivo.")
-            sys.exit("Error: Formato de archivo de configuración inválido.")
-        except Exception as e:
-            logger.error(f"Error inesperado al cargar '{ruta_archivo}': {e}")
+            logger.error(f"Error inesperado al cargar '{self.config_file}': {e}")
             sys.exit("Error inesperado al cargar la configuración.")
