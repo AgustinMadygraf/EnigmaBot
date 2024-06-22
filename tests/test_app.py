@@ -60,4 +60,4 @@ async def test_main(monkeypatch):
     monkeypatch.setattr('src.config_loader.ConfigManager', DummyConfigManager)
     monkeypatch.setattr('src.chatbot.ChatBot', DummyChatBot)
 
-    await main()
+    await main(input_func=lambda _: "1")
