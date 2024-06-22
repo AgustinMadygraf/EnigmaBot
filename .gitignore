@@ -3,3 +3,4 @@ src/logs/sistema.log
 src/logs/__pycache__/
 src/logs/__pycache__/
 docs/00-Prompt-for-ProjectAnalysis.md
+.env

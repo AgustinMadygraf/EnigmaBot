@@ -37,10 +37,16 @@ class ChatBot:
         """
         Permite al usuario seleccionar un modelo de IA basado en la capacidad de RAM seleccionada.
         """
-        modelos_a_mostrar = self.config['models_available'].get(self.ram_seleccionada, [])
+        modelos_a_mostrar = self.obtener_modelos_disponibles()
         self.mostrar_opciones_modelo(modelos_a_mostrar)
-
         return self.obtener_seleccion_modelo(modelos_a_mostrar)
+
+    def obtener_modelos_disponibles(self):
+        """
+        Obtiene la lista de modelos disponibles según la RAM seleccionada.
+        """
+        return self.config['models_available'].get(self.ram_seleccionada, [])
+
 
     def mostrar_opciones_modelo(self, modelos):
         """
@@ -97,17 +103,27 @@ class ChatBot:
 
     async def iniciar_chat(self):
         logger.info("Bienvenido al ChatBot interactivo!")
-        chat_id = "user_console"  # Usaremos un ID ficticio para la consola
+        chat_id = "user_console"
+        self.preparar_chat(chat_id)
+        await self.ciclo_principal_chat(chat_id)
+
+    def preparar_chat(self, chat_id):
+        """
+        Prepara el entorno de chat inicializando el historial de chat.
+        """
         self.chat_histories[chat_id] = []
-        try:
-            while True:
-                mensaje = input("User: ")
-                if mensaje.lower() == "salir":
-                    logger.info("Terminando el chat. ¡Hasta luego!")
-                    break
-                self.procesar_mensaje(chat_id, mensaje)
-        finally:
-            await self.detener_monitorizacion()
+
+    async def ciclo_principal_chat(self, chat_id):
+        """
+        Ejecuta el ciclo principal del chat interactivo.
+        """
+        while True:
+            mensaje = input("User: ")
+            if mensaje.lower() == "salir":
+                logger.info("Terminando el chat. ¡Hasta luego!")
+                break
+            self.procesar_mensaje(chat_id, mensaje)
+
 
     def procesar_mensaje(self, chat_id, mensaje):
         self.chat_histories[chat_id].append({'role': 'user', 'content': mensaje})
@@ -118,17 +134,34 @@ class ChatBot:
     def generar_respuesta(self, chat_id):
         logger.info(f"Consultando a la IA local, CPU trabajando...")
         inicio_generacion = time.time()
-        tokens = []
+        prompt = self.construir_prompt(chat_id)
+        respuesta = self.obtener_respuesta(prompt)
+        self.registrar_respuesta(chat_id, respuesta)
+        tiempo_generacion = time.time() - inicio_generacion
+        print("")
+        logger.info(f"Tiempo de generación de respuesta: {tiempo_generacion:.2f} segundos")
+        return respuesta
+
+    def construir_prompt(self, chat_id):
+        """
+        Construye el prompt basado en el historial de chat.
+        """
         chat_history = self.chat_histories[chat_id]
-        prompt = " ".join([msg['content'] for msg in chat_history])
+        return " ".join([msg['content'] for msg in chat_history])
+
+    def obtener_respuesta(self, prompt):
+        """
+        Obtiene la respuesta del modelo IA.
+        """
+        tokens = []
         with self.model.chat_session(self.system_template):
             for token in self.model.generate(prompt, streaming=True):
                 tokens.append(token)
                 print(token, end='', flush=True)
-            respuesta = "".join(tokens)
-            self.chat_histories[chat_id].append({'role': 'bot', 'content': respuesta})
-            tiempo_generacion = time.time() - inicio_generacion
-            logger.info(f"\nTiempo de generación de respuesta: {tiempo_generacion:.2f} segundos")
-            return respuesta
+        return "".join(tokens)
 
-
+    def registrar_respuesta(self, chat_id, respuesta):
+        """
+        Registra la respuesta en el historial de chat.
+        """
+        self.chat_histories[chat_id].append({'role': 'bot', 'content': respuesta})

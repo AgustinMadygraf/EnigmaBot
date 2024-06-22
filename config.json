@@ -1,5 +1,4 @@
 {
-    "telegram_token":"6607385662:AAGxUEHCzreuPcSFGewCMmmpMT4lM9Phl-o",
     "model_path": "E:\\Model _Explorer",
     "chat_history_path": "data/context_window_telegram.json",
     "ram_options": {
