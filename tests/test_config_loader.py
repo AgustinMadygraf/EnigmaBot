@@ -1,7 +1,7 @@
 # tests/test_config_loader.py
 import pytest
 import json
-import os
+import io
 from src.config_loader import ConfigManager
 
 def test_cargar_configuracion_correcta(monkeypatch):
@@ -18,9 +18,9 @@ def test_cargar_configuracion_correcta(monkeypatch):
 
     def mock_open(*args, **kwargs):
         if args[0] == 'config.json':
-            return json.dumps(dummy_config)
+            return io.StringIO(json.dumps(dummy_config))
         return open(*args, **kwargs)
-    
+
     monkeypatch.setattr('builtins.open', mock_open)
 
     config_manager = ConfigManager('config.json')
@@ -37,7 +37,7 @@ def test_archivo_no_encontrado(monkeypatch):
 
 def test_json_decode_error(monkeypatch):
     def mock_open(*args, **kwargs):
-        return "invalid json"
+        return io.StringIO("invalid json")
 
     monkeypatch.setattr('builtins.open', mock_open)
 

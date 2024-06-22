@@ -9,7 +9,7 @@ def config_manager():
 
 @pytest.fixture
 def chatbot(config_manager):
-    return ChatBot(config_manager.config)
+    return ChatBot(config_manager.config, input_func=lambda _: "1")
 
 @pytest.mark.asyncio
 async def test_iniciar_chat(chatbot, monkeypatch):
