@@ -40,15 +40,14 @@ def imprimir_datos_recursos(datos, primera_lectura=True):
 
     mensaje = "Primera lectura antes de la carga del LLM" if primera_lectura else "Lectura durante el proceso de carga del LLM"
     print(f"\n{mensaje}\n" + tabulate(data, headers, tablefmt="grid"))
-    if not primera_lectura:
-        sys.stdout.write(" " * 150 + "\r")
-        sys.stdout.flush()
+    sys.stdout.flush()
 
 # Función para monitorizar recursos
 async def monitorizar_recursos(velocidad_base_ghz=3.7):
     primera_lectura = True
     while True:
         try:
+            logger.debug("Recolectando datos de recursos...")
             datos_recursos = recolectar_datos_recursos(velocidad_base_ghz)
             imprimir_datos_recursos(datos_recursos, primera_lectura)
             primera_lectura = False  
@@ -56,3 +55,5 @@ async def monitorizar_recursos(velocidad_base_ghz=3.7):
         except asyncio.CancelledError:
             logger.debug("Monitorización de recursos finalizada.")
             break
+        except Exception as e:
+            logger.error(f"Error en la monitorización de recursos: {e}")
