@@ -9,42 +9,6 @@ from src.logs.config_logger import configurar_logging
 
 logger = configurar_logging()
 
-def obtener_opciones_usuario(config):
-    """
-    Obtiene las opciones del usuario para la configuración del chatbot.
-
-    Esta función interactúa con el usuario para determinar el modo de respuesta del bot y la capacidad de memoria RAM deseada. 
-    Asegura que las opciones seleccionadas sean válidas según la configuración proporcionada.
-
-    Parámetros:
-    config (dict): Un diccionario que contiene la configuración del bot, incluyendo opciones de RAM.
-
-    Retorna:
-    tuple: Un tuple que contiene un booleano para indicar si se usa respuesta rápida y la memoria RAM seleccionada.
-    """
-    modo_respuesta = obtener_modo_respuesta()
-    ram_seleccionada = seleccionar_memoria_ram(config)
-    return modo_respuesta, ram_seleccionada
-
-def obtener_modo_respuesta():
-    """
-    Solicita al usuario elegir el modo de respuesta del bot.
-
-    Permite al usuario elegir entre una respuesta rápida o una respuesta detallada. Valida la entrada del usuario y 
-    usa el modo de respuesta rápida por defecto en caso de una selección inválida.
-
-    Retorna:
-    bool: Verdadero para respuesta rápida, Falso para respuesta detallada.
-    """
-    print("\nElige el modo de respuesta del bot:")
-    print("1. Respuesta rápida (ventana de contexto limitada a la última pregunta)")
-    print("2. Respuesta detallada (ventana de contexto ampliada a todo el historial)")
-    modo_respuesta = input("Selecciona una opción (1 o 2): ")
-    if modo_respuesta == "":
-        modo_respuesta = "1"
-    logger.info(f"Modo de respuesta seleccionado: {modo_respuesta}")
-    return modo_respuesta == "1" or modo_respuesta not in ["1", "2"]
-
 def seleccionar_memoria_ram(config):
     """
     Solicita al usuario seleccionar la capacidad de memoria RAM.
@@ -65,7 +29,7 @@ def seleccionar_memoria_ram(config):
     
     opcion_ram = input("\nElige una opción: ")
     if opcion_ram == "":
-        opcion_ram = "3"
+        opcion_ram = "4"
     logger.info(f"Opción de RAM seleccionada: {opcion_ram}")
     return ram_options.get(opcion_ram, "2")
 
