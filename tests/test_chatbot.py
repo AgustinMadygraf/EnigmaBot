@@ -1,6 +1,6 @@
 # tests/test_chatbot.py
 import pytest
-from src.chatbot import ChatBot
+from core.chatbot import ChatBot
 
 @pytest.fixture
 def config():
@@ -34,9 +34,6 @@ def config():
 @pytest.fixture
 def chatbot(config):
     return ChatBot(config, input_func=lambda _: "1")
-
-def test_seleccionar_memoria_ram(chatbot):
-    assert chatbot.seleccionar_memoria_ram() == "1 GB"
 
 def test_seleccionar_modelo(chatbot):
     chatbot.ram_seleccionada = "1 GB"

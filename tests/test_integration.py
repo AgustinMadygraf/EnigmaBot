@@ -1,20 +1,22 @@
 # tests/test_integration.py
 import pytest
-from src.config_loader import ConfigManager
-from src.chatbot import ChatBot
+import asyncio
+from core.chatbot import ChatBot
+from utils.config_loader import ConfigManager
 
 @pytest.fixture
-def config_manager():
-    return ConfigManager('config.json')
+def config():
+    config_manager = ConfigManager('config/config.json')
+    return config_manager.config
 
 @pytest.fixture
-def chatbot(config_manager):
-    return ChatBot(config_manager.config, input_func=lambda _: "1")
+def chatbot(config):
+    return ChatBot(config, input_func=lambda _: "1")
 
 @pytest.mark.asyncio
 async def test_iniciar_chat(chatbot, monkeypatch):
     async def mock_ciclo_principal_chat(chat_id):
-        pass
+        pass  # Simular la ejecución del ciclo de chat sin necesidad de interacción real
 
     monkeypatch.setattr(chatbot, 'ciclo_principal_chat', mock_ciclo_principal_chat)
     await chatbot.iniciar_chat()
