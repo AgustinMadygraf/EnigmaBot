@@ -163,7 +163,12 @@ class ChatBot:
         Construye el prompt basado en el historial de chat.
         """
         chat_history = self.chat_histories[chat_id]
-        return " ".join([msg['content'] for msg in chat_history])
+        prompt_parts = [self.system_template]
+        for msg in chat_history:
+            role = "Human" if msg['role'] == 'user' else "Assistant"
+            prompt_parts.append(f"\n### {role}:\n{msg['content']}")
+        
+        return "\n".join(prompt_parts)
 
     def obtener_respuesta(self, prompt):
         """
