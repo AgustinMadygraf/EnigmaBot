@@ -144,7 +144,8 @@ class ChatBot:
         self.chat_histories[chat_id].append({'role': 'user', 'content': mensaje})
         respuesta = self.generar_respuesta(chat_id)
         print("")
-        logger.info(f"Bot: {respuesta}\n\n")
+        logger.info(f"Assistant: {respuesta}")
+        self.registrar_respuesta(chat_id, respuesta)  
 
     def generar_respuesta(self, chat_id):
         logger.info(f"Consultando a la IA local, CPU trabajando...")
@@ -179,7 +180,7 @@ class ChatBot:
         """
         Registra la respuesta en el historial de chat.
         """
-        self.chat_histories[chat_id].append({'role': 'bot', 'content': respuesta})
+        self.chat_histories[chat_id].append({'role': 'assistant', 'content': respuesta})
 
     # Función de entrenamiento del chatbot
     async def entrenar(self):
