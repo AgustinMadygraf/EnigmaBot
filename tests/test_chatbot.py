@@ -5,7 +5,7 @@ from core.chatbot import ChatBot
 @pytest.fixture
 def config():
     return {
-        "model_path": "E:\\Model _Explorer",
+        "model_path": "E:\\model_Explorer",
         "chat_history_path": "data/context_window_telegram.json",
         "ram_options": {
             "1": "1 GB",
