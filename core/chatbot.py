@@ -141,7 +141,10 @@ class ChatBot:
         return await loop.run_in_executor(None, input)
 
     def procesar_mensaje(self, chat_id, mensaje):
-        self.chat_histories[chat_id].append({'role': 'Human', 'content': mensaje})
+        # Verificar si el último mensaje es igual al actual
+        if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != mensaje or self.chat_histories[chat_id][-1]['role'] != 'Human':
+            self.chat_histories[chat_id].append({'role': 'Human', 'content': mensaje})
+        
         respuesta = self.generar_respuesta(chat_id)
         print("")
         logger.info(f"Assistant: {respuesta}")
@@ -196,7 +199,9 @@ class ChatBot:
         """
         Registra la respuesta en el historial de chat.
         """
-        self.chat_histories[chat_id].append({'role': 'Assistant', 'content': respuesta})
+        # Verificar si el último mensaje es igual al actual
+        if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != respuesta or self.chat_histories[chat_id][-1]['role'] != 'Assistant':
+            self.chat_histories[chat_id].append({'role': 'Assistant', 'content': respuesta})
 
     # Función de entrenamiento del chatbot
     async def entrenar(self):
