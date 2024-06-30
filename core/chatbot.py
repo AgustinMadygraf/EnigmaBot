@@ -167,12 +167,17 @@ class ChatBot:
         chat_history = self.chat_histories[chat_id]
         print(f"chat_history: {chat_history}\n")
         prompt_parts = []
+        is_first_message = True
         for msg in chat_history:
             role = msg['role']
             if role == 'Human':
-                prompt_parts.append(f"Human: {msg['content']}\n")
+                if is_first_message:
+                    prompt_parts.append(f"{msg['content']}\n")
+                    is_first_message = False
+                else:
+                    prompt_parts.append(f"### Human:\n{msg['content']}\n")
             elif role == 'Assistant':
-                prompt_parts.append(f"Assistant: {msg['content']}\n")
+                prompt_parts.append(f"### Assistant:\n{msg['content']}\n")
         return "\n".join(prompt_parts)
 
     def obtener_respuesta(self, prompt):
@@ -181,6 +186,7 @@ class ChatBot:
         """
         tokens = []
         with self.model.chat_session(self.system_template):
+            print(f"Prompt: {prompt}")
             for token in self.model.generate(prompt, streaming=True):
                 tokens.append(token)
                 print(token, end='', flush=True)
