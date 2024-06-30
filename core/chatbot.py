@@ -126,7 +126,7 @@ class ChatBot:
         Ejecuta el ciclo principal del chat interactivo.
         """
         while True:
-            mensaje = await self.obtener_input_async("User: ")
+            mensaje = await self.obtener_input_async("Human: ")
             if mensaje.lower() == "salir":
                 logger.info("Terminando el chat. ¡Hasta luego!")
                 break
@@ -141,11 +141,11 @@ class ChatBot:
         return await loop.run_in_executor(None, input)
 
     def procesar_mensaje(self, chat_id, mensaje):
-        self.chat_histories[chat_id].append({'role': 'user', 'content': mensaje})
+        self.chat_histories[chat_id].append({'role': 'Human', 'content': mensaje})
         respuesta = self.generar_respuesta(chat_id)
         print("")
         logger.info(f"Assistant: {respuesta}")
-        self.registrar_respuesta(chat_id, respuesta)  
+        self.registrar_respuesta(chat_id, respuesta)
 
     def generar_respuesta(self, chat_id):
         logger.info(f"Consultando a la IA local, CPU trabajando...")
@@ -162,12 +162,17 @@ class ChatBot:
         """
         Construye el prompt basado en el historial de chat.
         """
+        print("funcion construir_prompt")
+        print(f"chat_id: {chat_id}")
         chat_history = self.chat_histories[chat_id]
-        prompt_parts = [self.system_template]
+        print(f"chat_history: {chat_history}\n")
+        prompt_parts = []
         for msg in chat_history:
-            role = "Human" if msg['role'] == 'user' else "Assistant"
-            prompt_parts.append(f"\n### {role}:\n{msg['content']}")
-        
+            role = msg['role']
+            if role == 'Human':
+                prompt_parts.append(f"Human: {msg['content']}\n")
+            elif role == 'Assistant':
+                prompt_parts.append(f"Assistant: {msg['content']}\n")
         return "\n".join(prompt_parts)
 
     def obtener_respuesta(self, prompt):
@@ -185,7 +190,7 @@ class ChatBot:
         """
         Registra la respuesta en el historial de chat.
         """
-        self.chat_histories[chat_id].append({'role': 'assistant', 'content': respuesta})
+        self.chat_histories[chat_id].append({'role': 'Assistant', 'content': respuesta})
 
     # Función de entrenamiento del chatbot
     async def entrenar(self):
