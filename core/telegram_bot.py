@@ -25,14 +25,18 @@ class TelegramBot:
         response = self.chatbot.generar_respuesta("telegram_user")
         update.message.reply_text(response)
 
-    def run(self):
+    async def run(self):
         application = Application.builder().token(self.token).build()
 
         application.add_handler(CommandHandler("start", self.start))
         application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.echo))
 
-        application.run_polling(stop_signals=None)
+        await application.initialize()
+        await application.start()
+        print("Bot de Telegram iniciado...")
+        await application.updater.start_polling()
+        await application.updater.idle()
 
 async def iniciar_chat_telegram(config, input_func, model_class):
     telegram_bot = TelegramBot(config, input_func=input_func)
-    telegram_bot.run()
+    await telegram_bot.run()

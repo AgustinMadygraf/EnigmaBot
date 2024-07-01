@@ -42,6 +42,3 @@ def run_main():
         asyncio.ensure_future(main())
     else:
         loop.run_until_complete(main())
-
-if __name__ == '__main__':
-    run_main()
