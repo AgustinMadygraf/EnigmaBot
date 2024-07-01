@@ -13,3 +13,10 @@ def config():
     config_manager = ConfigManager('config/config.json')
     return config_manager.config
 
+def test_telegram_bot_start(config, monkeypatch):
+    # Simular la entrada del usuario
+    inputs = iter(["2", "1"])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+    
+    telegram_bot = TelegramBot(config, input_func=input)
+    assert telegram_bot.token == os.getenv("TELEGRAM_TOKEN")

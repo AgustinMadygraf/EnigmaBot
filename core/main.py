@@ -1,8 +1,9 @@
+#EnigmaBot/core/main.py
 import sys
 import asyncio
 from utils.config_loader import ConfigManager
 from core.chatbot import ChatBot
-from core.telegram_bot import TelegramBot
+from core.telegram_bot import iniciar_chat_telegram
 from utils.config_logger import configurar_logging
 from gpt4all import GPT4All
 from dotenv import load_dotenv
@@ -35,6 +36,12 @@ async def entrenar_chatbot(config, input_func, model_class):
     chatbot = ChatBot(config, model_class=model_class, input_func=input_func)
     await chatbot.entrenar()
 
-async def iniciar_chat_telegram(config, input_func, model_class):
-    telegram_bot = TelegramBot(config)
-    telegram_bot.run()
+def run_main():
+    loop = asyncio.get_event_loop()
+    if loop.is_running():
+        asyncio.ensure_future(main())
+    else:
+        loop.run_until_complete(main())
+
+if __name__ == '__main__':
+    run_main()
