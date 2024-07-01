@@ -9,9 +9,9 @@ import time
 import asyncio
 from utils.database import connect_to_database
 import time
-from utils.config_logger import configurar_logging
+from logs.config_logger import LoggerConfigurator
 
-logger = configurar_logging()
+logger = LoggerConfigurator().get_logger()
 
 class ChatBot:
     def __init__(self, config, model_class=GPT4All, input_func: Callable = input):

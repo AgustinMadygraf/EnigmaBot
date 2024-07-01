@@ -1,9 +1,9 @@
 # src/config_loader.py
 import json
 import sys
-from utils.config_logger import configurar_logging
+from logs.config_logger import LoggerConfigurator
 
-logger = configurar_logging()
+logger = LoggerConfigurator().get_logger()
 
 class ConfigManager:
     def __init__(self, config_file, logger=logger):

@@ -30,7 +30,7 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "standard",
-            "filename": "src/logs/sistema.log",
+            "filename": "logs/sistema.log",
             "maxBytes": 10485760,
             "backupCount": 5
         }

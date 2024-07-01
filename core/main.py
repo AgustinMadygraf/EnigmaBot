@@ -4,14 +4,13 @@ import asyncio
 from utils.config_loader import ConfigManager
 from core.chatbot import ChatBot
 from core.telegram_bot import iniciar_chat_telegram
-from utils.config_logger import configurar_logging
 from gpt4all import GPT4All
 from dotenv import load_dotenv
+from logs.config_logger import LoggerConfigurator
 
+logger = LoggerConfigurator().get_logger()
 # Cargar las variables del archivo .env
 load_dotenv()
-
-logger = configurar_logging()
 
 async def main(config_file="config/config.json", input_func=input, model_class=GPT4All):
     config_manager = ConfigManager(config_file)

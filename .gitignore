@@ -8,3 +8,5 @@ tests/__pycache__/
 utils/__pycache__/
 tests/tests/
 docs/00-Prompt-for-ProjectAnalysis.md
+logs/__pycache__/
+logs/sistema.log
