@@ -165,10 +165,7 @@ class ChatBot:
         """
         Construye el prompt basado en el historial de chat.
         """
-        print("funcion construir_prompt")
-        print(f"chat_id: {chat_id}")
         chat_history = self.chat_histories[chat_id]
-        print(f"chat_history: {chat_history}\n")
         prompt_parts = []
         is_first_message = True
         for msg in chat_history:
