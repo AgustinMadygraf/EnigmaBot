@@ -8,7 +8,6 @@ from tabulate import tabulate
 import time
 import asyncio
 from utils.database import connect_to_database
-import time
 from logs.config_logger import LoggerConfigurator
 
 logger = LoggerConfigurator().get_logger()
@@ -38,7 +37,7 @@ class ChatBot:
         cursor.close()
         conn.close()
         return session_id
-    
+
     def save_message_to_db(self, role, content):
         conn = connect_to_database()
         cursor = conn.cursor()
@@ -49,21 +48,6 @@ class ChatBot:
         conn.commit()
         cursor.close()
         conn.close()
-
-    def seleccionar_memoria_ram(self):
-        """
-        Solicita al usuario seleccionar la capacidad de memoria RAM.
-        """
-        ram_options = self.config['ram_options']
-        table_data = [[key, value] for key, value in ram_options.items()]
-        table = tabulate(table_data, headers=["Opción", "Memoria RAM"], tablefmt="grid")
-        print(table)
-
-        opcion_ram = self.input_func("\nElige una opción: ")
-        if opcion_ram == "":
-            opcion_ram = "4"
-        logger.info(f"Opción de RAM seleccionada: {opcion_ram}")
-        return ram_options.get(opcion_ram, "2")
 
     def seleccionar_modelo(self):
         """
@@ -167,7 +151,7 @@ class ChatBot:
         if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != mensaje or self.chat_histories[chat_id][-1]['role'] != 'Human':
             self.chat_histories[chat_id].append({'role': 'Human', 'content': mensaje})
             self.save_message_to_db('Human', mensaje)
-        
+
         respuesta = self.generar_respuesta(chat_id)
         print("")
         logger.info(f"Assistant: {respuesta}")

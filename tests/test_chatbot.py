@@ -1,3 +1,4 @@
+#EnigmaBot/tests/test_chatbot.py
 import pytest
 from core.chatbot import ChatBot
 from utils.database import connect_to_database
@@ -52,3 +53,6 @@ def test_save_message_to_db(chatbot):
     cursor.close()
     conn.close()
     assert ('Human', 'Hola, ¿cómo estás?') in result
+
+def test_seleccionar_memoria_ram(chatbot):
+    assert chatbot.ram_seleccionada == "1 GB"

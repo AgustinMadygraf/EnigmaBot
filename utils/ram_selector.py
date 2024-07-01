@@ -1,6 +1,8 @@
 # utils/ram_selector.py
 from tabulate import tabulate
+from logs.config_logger import LoggerConfigurator
 
+logger = LoggerConfigurator().get_logger()
 class RamSelector:
     def __init__(self, config, input_func=input):
         self.config = config
@@ -18,4 +20,5 @@ class RamSelector:
         opcion_ram = self.input_func("\nElige una opción: ")
         if opcion_ram == "":
             opcion_ram = "4"
+        logger.info(f"Opción de RAM seleccionada: {opcion_ram}")
         return ram_options.get(opcion_ram, "2")
