@@ -1,6 +1,6 @@
-# tests/test_chatbot.py
 import pytest
 from core.chatbot import ChatBot
+from utils.database import connect_to_database
 
 @pytest.fixture
 def config():
@@ -42,3 +42,13 @@ def test_seleccionar_modelo(chatbot):
 def test_seleccionar_system_template(chatbot):
     template = chatbot.seleccionar_system_template()
     assert "Responde siempre en español" in template
+
+def test_save_message_to_db(chatbot):
+    chatbot.save_message_to_db('Human', 'Hola, ¿cómo estás?')
+    conn = connect_to_database()
+    cursor = conn.cursor()
+    cursor.execute("SELECT role, content FROM chat_history WHERE session_id = %s", (chatbot.session_id,))
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    assert ('Human', 'Hola, ¿cómo estás?') in result

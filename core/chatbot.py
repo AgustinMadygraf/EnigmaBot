@@ -1,13 +1,15 @@
 # core/chatbot.py
 from typing import Callable
 from gpt4all import GPT4All
-from utils.config_logger import configurar_logging
 from utils.ram_selector import RamSelector
 from utils.model_selector import ModelSelector
 from utils.system_template_selector import SystemTemplateSelector
 from tabulate import tabulate
 import time
 import asyncio
+from utils.database import connect_to_database
+import time
+from utils.config_logger import configurar_logging
 
 logger = configurar_logging()
 
@@ -25,7 +27,28 @@ class ChatBot:
         self.model_class = model_class
         self.model = self.model_class(self.modelo_seleccionado, self.model_path)
         self.chat_histories = {}
-        self.monitor_task = None
+        self.session_id = self.create_new_session()
+
+    def create_new_session(self):
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO sessions () VALUES ()")
+        conn.commit()
+        session_id = cursor.lastrowid
+        cursor.close()
+        conn.close()
+        return session_id
+    
+    def save_message_to_db(self, role, content):
+        conn = connect_to_database()
+        cursor = conn.cursor()
+        cursor.execute("""
+        INSERT INTO chat_history (session_id, role, content) 
+        VALUES (%s, %s, %s)
+        """, (self.session_id, role, content))
+        conn.commit()
+        cursor.close()
+        conn.close()
 
     def seleccionar_memoria_ram(self):
         """
@@ -141,9 +164,9 @@ class ChatBot:
         return await loop.run_in_executor(None, input)
 
     def procesar_mensaje(self, chat_id, mensaje):
-        # Verificar si el último mensaje es igual al actual
         if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != mensaje or self.chat_histories[chat_id][-1]['role'] != 'Human':
             self.chat_histories[chat_id].append({'role': 'Human', 'content': mensaje})
+            self.save_message_to_db('Human', mensaje)
         
         respuesta = self.generar_respuesta(chat_id)
         print("")
@@ -193,12 +216,9 @@ class ChatBot:
         return "".join(tokens)
 
     def registrar_respuesta(self, chat_id, respuesta):
-        """
-        Registra la respuesta en el historial de chat.
-        """
-        # Verificar si el último mensaje es igual al actual
         if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != respuesta or self.chat_histories[chat_id][-1]['role'] != 'Assistant':
             self.chat_histories[chat_id].append({'role': 'Assistant', 'content': respuesta})
+            self.save_message_to_db('Assistant', respuesta)
 
     # Función de entrenamiento del chatbot
     async def entrenar(self):
