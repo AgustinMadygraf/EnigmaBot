@@ -4,29 +4,34 @@ from core.chatbot import ChatBot
 from core.telegram_command_handler import TelegramCommandHandler
 from core.telegram_message_handler import TelegramMessageHandler
 import os
+from logs.config_logger import LoggerConfigurator
+
+logger = LoggerConfigurator().get_logger()
 
 class TelegramBot:
-    """Main class to run the Telegram bot."""
+    """Clase principal para ejecutar el bot de Telegram."""
 
     def __init__(self, config, input_func=input):
         """
-        Initialize the Telegram bot.
+        Inicializa el bot de Telegram.
 
-        :param config: Configuration dictionary.
-        :param input_func: Input function, default is Python's input function.
+        :param config: Diccionario de configuración.
+        :param input_func: Función de entrada, por defecto es la función input de Python.
         """
         self.config = config
         self.chatbot = ChatBot(config, input_func=input_func)
         self.token = os.getenv("TELEGRAM_TOKEN")
         if not self.token:
-            raise ValueError("No TELEGRAM_TOKEN found in environment variables")
+            raise ValueError("No se encontró TELEGRAM_TOKEN en las variables de entorno")
 
         self.command_handler = TelegramCommandHandler()
         self.message_handler = TelegramMessageHandler(self.chatbot)
+        
+        logger.debug("TelegramBot inicializado con config: %s y token: %s", config, self.token)
 
     async def run(self):
         """
-        Run the Telegram bot.
+        Ejecuta el bot de Telegram.
         """
         application = Application.builder().token(self.token).build()
 
@@ -35,17 +40,18 @@ class TelegramBot:
 
         await application.initialize()
         await application.start()
-        print("Bot de Telegram iniciado...")
+        logger.debug("Bot de Telegram iniciado...")
+        
         await application.updater.start_polling()
         await application.updater.idle()
 
 async def iniciar_chat_telegram(config, input_func, model_class):
     """
-    Start the Telegram chat bot.
+    Inicia el bot de chat de Telegram.
 
-    :param config: Configuration dictionary.
-    :param input_func: Input function, default is Python's input function.
-    :param model_class: Model class for the chatbot.
+    :param config: Diccionario de configuración.
+    :param input_func: Función de entrada, por defecto es la función input de Python.
+    :param model_class: Clase del modelo para el chatbot.
     """
     telegram_bot = TelegramBot(config, input_func=input_func)
     await telegram_bot.run()
