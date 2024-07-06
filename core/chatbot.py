@@ -1,4 +1,4 @@
-# core/chatbot.py
+#EnigmaBor/core/chatbot.py
 from typing import Callable
 from gpt4all import GPT4All
 from utils.ram_selector import RamSelector
@@ -50,12 +50,9 @@ class ChatBot:
         conn.close()
 
     def seleccionar_modelo(self):
-        """
-        Permite al usuario seleccionar un modelo de IA basado en la capacidad de RAM seleccionada.
-        """
         modelos_a_mostrar = self.obtener_modelos_disponibles()
-        self.mostrar_opciones_modelo(modelos_a_mostrar)
-        return self.obtener_seleccion_modelo(modelos_a_mostrar)
+        self.mostrar_opciones(modelos_a_mostrar, "Modelos disponibles:")
+        return self.obtener_seleccion(modelos_a_mostrar, "\nSelecciona el número del modelo: ")
 
     def obtener_modelos_disponibles(self):
         """
@@ -93,24 +90,29 @@ class ChatBot:
                 print("Entrada inválida. Por favor ingresa un número.")
 
     def seleccionar_system_template(self):
-        """
-        Permite al usuario seleccionar un template de sistema para el chatbot.
-        """
         system_templates = self.config['system_templates']
-        table_data = [[idx + 1, template['mode']] for idx, template in enumerate(system_templates)]
-        table = tabulate(table_data, headers=["#", "Modo"], tablefmt="grid")
-        print(table)
+        self.mostrar_opciones(system_templates, "Templates de sistema disponibles:", lambda x: x['mode'])
+        seleccion = self.obtener_seleccion(system_templates, "\nSelecciona el número del template de sistema: ")
+        return seleccion['template']
 
+    def mostrar_opciones(self, opciones, mensaje, key_func=lambda x: x):
+        if opciones:
+            logger.info(mensaje)
+            table_data = [[idx + 1, key_func(opcion)] for idx, opcion in enumerate(opciones)]
+            table = tabulate(table_data, headers=["#", "Opción"], tablefmt="grid")
+            print(table)
+
+    def obtener_seleccion(self, opciones, mensaje_seleccion):
         while True:
             try:
-                seleccion_numero = self.input_func("\nSelecciona el número del template de sistema: ").strip()
+                seleccion_numero = self.input_func(mensaje_seleccion).strip()
                 if seleccion_numero == "":
                     seleccion_numero = "1"
                 seleccion_numero = int(seleccion_numero)
-                if 1 <= seleccion_numero <= len(system_templates):
-                    system_template = system_templates[seleccion_numero - 1]['template']
-                    logger.info(f"Template de sistema seleccionado: {system_templates[seleccion_numero - 1]['mode']}")
-                    return system_template
+                if 1 <= seleccion_numero <= len(opciones):
+                    seleccion = opciones[seleccion_numero - 1]
+                    logger.info(f"Selección: {seleccion}")
+                    return seleccion
                 else:
                     print("Selección fuera de rango. Intenta de nuevo.")
             except ValueError:
@@ -148,14 +150,16 @@ class ChatBot:
         return await loop.run_in_executor(None, input)
 
     def procesar_mensaje(self, chat_id, mensaje):
-        if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != mensaje or self.chat_histories[chat_id][-1]['role'] != 'Human':
-            self.chat_histories[chat_id].append({'role': 'Human', 'content': mensaje})
-            self.save_message_to_db('Human', mensaje)
-
+        self.guardar_mensaje_si_nuevo(chat_id, 'Human', mensaje)
         respuesta = self.generar_respuesta(chat_id)
         print("")
         logger.info(f"Assistant: {respuesta}")
         self.registrar_respuesta(chat_id, respuesta)
+
+    def guardar_mensaje_si_nuevo(self, chat_id, role, mensaje):
+        if not self.chat_histories[chat_id] or self.chat_histories[chat_id][-1]['content'] != mensaje or self.chat_histories[chat_id][-1]['role'] != role:
+            self.chat_histories[chat_id].append({'role': role, 'content': mensaje})
+            self.save_message_to_db(role, mensaje)
 
     def generar_respuesta(self, chat_id):
         logger.info(f"Consultando a la IA local, CPU trabajando...")
