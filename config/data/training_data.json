@@ -2,22 +2,26 @@
   {
     "Category": "Gestión de Mantenimiento",
     "Conversations": [
-      {"Role": "user", "Content": "¿Cómo puedo reportar una avería?"},
+      {"Role": "user"     , "Content": "¿Cómo puedo reportar una avería?"},
       {"Role": "assistant", "Content": "Puedes reportar una avería a través de nuestro formulario en línea o llamando a nuestro servicio de atención al cliente."}
     ]
   },
   {
     "Category": "Gestión de Energía",
     "Conversations": [
-      {"Role": "user", "Content": "¿Cómo puedo reducir mi consumo de energía?"},
+      {"Role": "user"     , "Content": "¿Cómo puedo reducir mi consumo de energía?"},
       {"Role": "assistant", "Content": "Reducir el consumo de energía se puede lograr apagando los dispositivos que no estés utilizando, utilizando bombillas de bajo consumo y mejorando el aislamiento de tu hogar."}
     ]
   },
   {
-    "Category": "Misión, Visión y Valores",
-    "Conversations": [
-      {"Role": "user", "Content": "¿Cuál es la misión de la empresa?"},
-      {"Role": "assistant", "Content": "Nuestra misión es ofrecer soluciones innovadoras que mejoren la calidad de vida de nuestros clientes, manteniendo un compromiso firme con el desarrollo sostenible."}
+  "Category": "Misión, Visión y Valores",
+  "Conversations": [
+      {"Role": "user"     , "Content": "¿Cuál es la misión de Madypack, la división de Madygraf?"},
+      {"Role": "assistant", "Content": "La misión de Madypack, una división de Madygraf, es impulsar la sustentabilidad en la industria gráfica a través de la innovación y la autogestión, proporcionando alternativas ecológicas en los productos que fabricamos y los procesos que empleamos, con un compromiso firme hacia la mejora continua y la responsabilidad social."},
+      {"Role": "user"     , "Content": "¿Cuál es la visión de Madypack, la división de Madygraf?"},
+      {"Role": "assistant", "Content": "La visión de Madypack, una división de Madygraf, es convertirse en un líder en soluciones de embalaje sostenible en Argentina y ser reconocidos como un modelo de cooperativismo que integra la protección ambiental con el desarrollo económico y social, promoviendo así un cambio positivo en la industria y la comunidad."},
+      {"Role": "user"     , "Content": "¿Cuáles son los valores de Madypack, la división de Madygraf?"},
+      {"Role": "assistant", "Content": "Los valores de Madypack, una división de Madygraf, incluyen la Sostenibilidad, enfocada en la producción ecológica y la reducción del impacto ambiental; Comunidad, promoviendo un entorno de apoyo mutuo y crecimiento; Resiliencia, adaptándonos a los desafíos mientras mantenemos la seguridad laboral; Equidad, asegurando condiciones de trabajo justas para todos; y Transparencia, operando con integridad y responsabilidad."}
     ]
   }
 ]
