@@ -1,0 +1,23 @@
+[
+  {
+    "Category": "Gestión de Mantenimiento",
+    "Conversations": [
+      {"Role": "user", "Content": "¿Cómo puedo reportar una avería?"},
+      {"Role": "assistant", "Content": "Puedes reportar una avería a través de nuestro formulario en línea o llamando a nuestro servicio de atención al cliente."}
+    ]
+  },
+  {
+    "Category": "Gestión de Energía",
+    "Conversations": [
+      {"Role": "user", "Content": "¿Cómo puedo reducir mi consumo de energía?"},
+      {"Role": "assistant", "Content": "Reducir el consumo de energía se puede lograr apagando los dispositivos que no estés utilizando, utilizando bombillas de bajo consumo y mejorando el aislamiento de tu hogar."}
+    ]
+  },
+  {
+    "Category": "Misión, Visión y Valores",
+    "Conversations": [
+      {"Role": "user", "Content": "¿Cuál es la misión de la empresa?"},
+      {"Role": "assistant", "Content": "Nuestra misión es ofrecer soluciones innovadoras que mejoren la calidad de vida de nuestros clientes, manteniendo un compromiso firme con el desarrollo sostenible."}
+    ]
+  }
+]
