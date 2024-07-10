@@ -198,7 +198,7 @@ class ChatBot:
         tokens = []
         with self.model.chat_session(self.system_template):
             print(f"Prompt: {prompt}")
-            for token in self.model.generate(prompt, streaming=True):
+            for token in self.model.generate(prompt, max_tokens=2048, streaming=True,n_batch = 9):
                 tokens.append(token)
                 print(token, end='', flush=True)
         return "".join(tokens)
