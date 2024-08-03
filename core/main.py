@@ -29,7 +29,7 @@ async def main(config_file="config/config.json", input_func=input, model_class=G
             await iniciar_chat_telegram(config, input_func, model_class)
         else:
             chatbot = ChatBot(config, model_class=model_class, input_func=input_func)
-            await chatbot.iniciar_chat()
+            await chatbot.iniciar_chat_consola()
 
 async def entrenar_chatbot(config, input_func, model_class):
     chatbot = ChatBot(config, model_class=model_class, input_func=input_func)

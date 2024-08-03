@@ -118,7 +118,7 @@ class ChatBot:
             except ValueError:
                 print("Entrada inválida. Por favor ingresa un número.")
 
-    async def iniciar_chat(self):
+    async def iniciar_chat_consola(self):
         logger.info("Bienvenido al ChatBot interactivo!")
         chat_id = "user_console"
         self.preparar_chat(chat_id)
